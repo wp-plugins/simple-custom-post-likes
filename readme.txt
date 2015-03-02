@@ -1,5 +1,5 @@
 === Simple custom post likes ===
-Contributors: richymilo
+Contributors: richymilo, leogopal
 Donate link: http://richymiles.wordpress.com
 Tags: custom post types, likes, featured, voting, rating, polling
 Requires at least: 3.9
