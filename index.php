@@ -1,29 +1,29 @@
 <?php
-/**
- * Plugin Name: Simple Featured post likes
- * Description: Adds Likes/Favorites to Wordpress post or custom post type.
- * Author: Richard Miles
- * Version: 1.0.1
- * Author URI: http://richymiles.wordpress.com
- */
-
+/*
+Plugin Name: Simple Featured post likes
+Description: Adds Likes/Favorites to Wordpress post or custom post type.
+Author: Richard Miles
+Version: 1.0
+Author URI: http://richymiles.wordpress.com
+*/
 
 function get_users_array($post_id) {
     $new_array = array();
     $array = get_post_meta($post_id,'favourite_users');
-    if (!$array) {
+    if (empty($array) || is_null($array)) {
      	return false;
      } 
-    foreach($array[0] as $key => $value)
+    foreach($array[0] as $key => $value) {
      $new_array[$key] = $value;
+    }
     return $new_array;
 }
 
 function count_users_array($post_id) {
     $new_array = array();
     $array = get_post_meta($post_id,'favourite_users');
-    if (! $array) {
-     	return false;
+    if (empty($array) || is_null($array)) {
+     	return 0;
      } 
      $count = 0;
     foreach($array[0] as $key => $value) {
@@ -38,14 +38,11 @@ function count_users_array($post_id) {
 function favourates_ajax() {
 		if (isset($_REQUEST['post_id'])) {
 			$users = get_users_array($_REQUEST['post_id']);
-			$liked;
+			$liked = false;
 			if ($users) {
 				if(!in_array(get_user_id(), $users)) {
-					?>
-					<?php
-					$liked = false;
-			array_push($users, get_user_id()); 
-			update_post_meta($_REQUEST['post_id'], 'favourite_users', $users);
+					array_push($users, get_user_id()); 
+					update_post_meta($_REQUEST['post_id'], 'favourite_users', $users);
 				} else {
 					$liked = true;
 					$key = array_search(get_user_id(), $users);
@@ -78,16 +75,16 @@ add_action( 'wp_enqueue_scripts', 'enqueue_likes_scripts' );
 // 	// add_menu_page( 'Post Likes', 'Miles Dev', 'manage_options', 'post_likes/admin.php', '', '', 6 );
 // }
 
-add_action('admin_menu', 'add_likes_menu');
+add_action('admin_menu', 'my_plugin_menu');
 
-function add_likes_menu() {
+function my_plugin_menu() {
 	add_options_page('My Options', 'Favourite Posts', 'manage_options', plugin_dir_path( __FILE__ ) . 'admin.php');
 }
 
 
-add_action('wp_head','simple_likes_ajaxurl');
+add_action('wp_head','pluginname_ajaxurl');
 
-function simple_likes_ajaxurl() {
+function pluginname_ajaxurl() {
 ?>
 <script type="text/javascript">
 var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
@@ -137,7 +134,7 @@ jQuery.ajax({
 	var value = jQuery.trim(obj.count);
 //status is the http request status - 200 for all good, 404 not found e.t.c
 	jQuery('#user_favourite').val(value);
-	console.log("success");
+	console.log(value);
 	if (obj.liked) {
 		jQuery('#user_favourite').css('background' , 'tomato');
 	} else {
@@ -152,7 +149,10 @@ jQuery.ajax({
 	    	</script>
 	    	<?php
 	    	// echo get_user_id();
-	    	$content .= ob_get_contents();
+	    	if (is_single()) {
+	    		$content .= ob_get_contents();
+	    	}
+	    
 	    	ob_end_clean();
 	    }
 	    return $content;
