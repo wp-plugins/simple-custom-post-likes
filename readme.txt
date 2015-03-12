@@ -1,5 +1,5 @@
 === Simple custom post likes ===
-Contributors: richymilo
+Contributors: richymilo , leogopal
 Donate link: http://wobble.co.za/
 Tags: custom post types, likes, featured
 Requires at least: 3.0.1
